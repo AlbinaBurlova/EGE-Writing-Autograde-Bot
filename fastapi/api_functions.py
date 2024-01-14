@@ -5,7 +5,7 @@ from utils.strings import ERROR
 
 async def send_to_api(text, letter):
 
-    url = "http://localhost:8000/predict"
+    url = "https://d5d08u0j2sectp2kvlgr.apigw.yandexcloud.net/predict"
 
     data = {
         "data": {
