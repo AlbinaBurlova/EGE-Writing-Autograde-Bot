@@ -1,13 +1,14 @@
-from aiogram import types, Router
+from aiogram import types, Router, Bot
 from aiogram import F
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state, State, StatesGroup
 from aiogram.types import CallbackQuery
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
+
+from config_reader import config
 from utils.strings import RATE_BOT, ASK_FOR_RECOMMENDATIONS, SKIP, THANKS
 
-# TODO: определиться с тем, где храним данные: оценку пользователи и рекомендации
 
 router = Router()
 
@@ -44,13 +45,26 @@ async def rate(message: types.Message, state: FSMContext):
 
 
 @router.message(F.text != SKIP, StateFilter(FSMFillForm.waiting_for_recommendations))
-async def get_recommendations(message: types.Message, state: FSMContext):
+async def get_recommendations(message: types.Message, state: FSMContext, bot: Bot):
     await state.update_data(recommendations=message.text)
     await message.answer(THANKS, reply_markup=types.ReplyKeyboardRemove())
+    data = await state.get_data()
+    await send_feedback_to_developer(bot, message.from_user.id, data['rating'], data.get('recommendations'))
     await state.set_state(state=None)
 
 
 @router.message(F.text == SKIP, StateFilter(FSMFillForm.waiting_for_recommendations))
-async def skip_recommendations(message: types.Message, state: FSMContext):
+async def skip_recommendations(message: types.Message, state: FSMContext, bot: Bot):
     await message.answer(THANKS, reply_markup=types.ReplyKeyboardRemove())
+    data = await state.get_data()
+    await send_feedback_to_developer(bot, message.from_user.id, data['rating'])
     await state.set_state(state=None)
+
+
+async def send_feedback_to_developer(bot: Bot, user_id: int, rating: int, recommendations: str = None):
+    developer_ids = [config.developer_id_1, config.developer_id_2]
+    feedback_message = f"Пользователь с ID {user_id} поставил мне {rating}"
+    if recommendations:
+        feedback_message += f" и оставил следующую рекомендацию: {recommendations}"
+    for dev_id in developer_ids:
+        await bot.send_message(dev_id, feedback_message)
