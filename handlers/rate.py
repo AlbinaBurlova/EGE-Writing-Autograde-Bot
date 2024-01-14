@@ -57,11 +57,11 @@ async def get_recommendations(message: types.Message, state: FSMContext, bot: Bo
 async def skip_recommendations(message: types.Message, state: FSMContext, bot: Bot):
     await message.answer(THANKS, reply_markup=types.ReplyKeyboardRemove())
     data = await state.get_data()
-    await send_feedback_to_developer(message.from_user.id, data['rating'], bot)
+    await send_feedback_to_developer(bot, message.from_user.id, data['rating'])
     await state.set_state(state=None)
 
 
-async def send_feedback_to_developer(user_id: int, rating: int, recommendations: str = None, bot: Bot):
+async def send_feedback_to_developer(bot: Bot, user_id: int, rating: int, recommendations: str = None):
     developer_ids = [config.developer_id_1, config.developer_id_2]
     feedback_message = f"Пользователь с ID {user_id} поставил мне {rating}"
     if recommendations:
