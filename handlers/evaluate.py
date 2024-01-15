@@ -6,7 +6,7 @@ from aiogram.fsm.state import default_state, State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
 
-from fastapi.api_functions import send_to_api
+from fast_api.api_functions import send_to_api
 from handlers.start import create_inline_kb
 from utils.strings import LETTER_ONE, LETTER_TWO, LETTER_THREE, ERROR, RESTART_MESSAGE, WAITING_MESSAGE
 
