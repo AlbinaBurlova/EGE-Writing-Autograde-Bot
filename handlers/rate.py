@@ -59,7 +59,7 @@ async def skip_recommendations(message: types.Message, state: FSMContext, bot: B
     await send_feedback_to_developer(bot, message.from_user.id, data['rating'])
     await state.set_state(state=None)
 
-
+# оценка и комментарии пользователя отправляются напрямую разработчикам для оперативной обратной связи
 async def send_feedback_to_developer(bot: Bot, user_id: int, rating: int, recommendations: str = None):
     developer_ids = [config.developer_id_1, config.developer_id_2]
     feedback_message = f"Пользователь с ID {user_id} поставил мне {rating}"
