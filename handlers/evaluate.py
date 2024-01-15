@@ -9,7 +9,7 @@ from aiogram.filters import Command, StateFilter
 
 from fast_api.api_functions import send_to_api
 from handlers.start import create_inline_kb
-from utils.strings import LETTER_ONE, LETTER_TWO, LETTER_THREE, RESTART_MESSAGE, WAITING_MESSAGE, TRY_AGAIN
+from utils.strings import LETTER_ONE, LETTER_TWO, LETTER_THREE, RESTART_MESSAGE, WAITING_MESSAGE, TRY_AGAIN, ERROR
 from handlers.get_stat import results
 
 
@@ -37,29 +37,27 @@ async def msg_display_letter(callback: CallbackQuery, state: FSMContext):
 
 @router.message(StateFilter(FSMFillForm.waiting_for_text_input))
 async def process_text_input(message: types.Message, state: FSMContext):
-
     await message.answer(WAITING_MESSAGE)
-
+    
     user_data = await state.get_data()
     chosen_letter = user_data['chosen_letter']
     await state.update_data(user_text=message.text)
-
-    try:
-        # Подключение к API
-        evaluation_result = await send_to_api(message.text, letter=chosen_letter)
-        await state.update_data(result=evaluation_result)
-        results.append(evaluation_result)
-        keyboard = create_inline_kb(1, 'btn_6', 'btn_7', 'btn_8', 'btn_9')
-        await message.answer(f"Ваш результат: {evaluation_result['total']} из 6 баллов",
-                             reply_markup=keyboard)
-
-    except Exception as e:
+    
+    evaluation_result = await send_to_api(message.text, letter=chosen_letter)
+    
+    if evaluation_result == ERROR:
         await message.answer(TRY_AGAIN)
-        await asyncio.sleep(3)
+        await asyncio.sleep(5)
         await start_over(message)
         await state.set_state(state=None)
         return
 
+    await state.update_data(result=evaluation_result)
+    results.append(evaluation_result)
+    
+    keyboard = create_inline_kb(1, 'btn_6', 'btn_7', 'btn_8', 'btn_9')
+    
+    await message.answer(f"Ваш результат: {evaluation_result['total']} из 6 баллов", reply_markup=keyboard)
     await state.set_state(state=None)
 
 
