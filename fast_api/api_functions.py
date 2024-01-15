@@ -14,7 +14,7 @@ async def send_to_api(text, letter):
         }
     }
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=90.0) as client:
         response = await client.post(url, json=data)
     if response.status_code == 200:
         return response.json()
