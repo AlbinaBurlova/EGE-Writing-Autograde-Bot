@@ -65,7 +65,6 @@ async def process_text_input(message: types.Message, state: FSMContext):
 async def get_comments(callback: CallbackQuery, state: FSMContext):
     user_data = await state.get_data()
     evaluation_result = user_data['result']
-    print(evaluation_result)
 
     await callback.message.answer(text=f'Решение коммуникативной задачи: {evaluation_result["k1"]} из 2 баллов.\nОрганизация текста: {evaluation_result["k2"]} из 2 баллов.\nЯзыковое оформление текста: {evaluation_result["k3"]} из 2 баллов.\n{evaluation_result["comments"]}')
 
