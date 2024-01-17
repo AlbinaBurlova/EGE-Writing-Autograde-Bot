@@ -69,6 +69,14 @@ async def get_comments(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text=f'Решение коммуникативной задачи: {evaluation_result["k1"]} из 2 баллов.\nОрганизация текста: {evaluation_result["k2"]} из 2 баллов.\nЯзыковое оформление текста: {evaluation_result["k3"]} из 2 баллов.\n{evaluation_result["comments"]}')
 
 
+@router.callback_query(F.data == 'view_my_work')
+async def view_my_work(callback: CallbackQuery, state: FSMContext):
+    user_data = await state.get_data()
+    user_text = user_data['user_text']
+
+    await callback.message.answer(text=f'Ваша работа: \n{user_text}')
+    
+
 async def start_over(event: Union[types.Message, CallbackQuery]):
 
     keyboard = create_inline_kb(3, 'btn_1', 'btn_2', 'btn_3')
