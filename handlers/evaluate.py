@@ -46,9 +46,7 @@ async def process_text_input(message: types.Message, state: FSMContext):
     evaluation_result = await send_to_api(message.text, letter=chosen_letter)
     
     if evaluation_result == ERROR:
-        await message.answer(TRY_AGAIN)
-        await asyncio.sleep(5)
-        await start_over(message)
+        await message.answer(ERROR)
         await state.set_state(state=None)
         return
 
