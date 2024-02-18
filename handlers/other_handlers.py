@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message
-from utils.strings import SEND_TO_MENU
 
+from utils.strings import SEND_TO_MENU
 
 router = Router()
 

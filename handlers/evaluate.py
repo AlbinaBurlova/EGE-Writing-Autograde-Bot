@@ -1,17 +1,16 @@
 from typing import Union
-import asyncio
 
 from aiogram import Router, types, F
-from aiogram.types import CallbackQuery
-from aiogram.fsm.state import default_state, State, StatesGroup
-from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command, StateFilter
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state, State, StatesGroup
+from aiogram.types import CallbackQuery
 
 from fast_api.api_functions import send_to_api
-from handlers.start import create_inline_kb
-from utils.strings import LETTER_ONE, LETTER_TWO, LETTER_THREE, RESTART_MESSAGE, WAITING_MESSAGE, TRY_AGAIN, ERROR
 from handlers.get_stat import results
-
+from handlers.start import create_inline_kb
+from utils.strings import (LETTER_ONE, LETTER_TWO, LETTER_THREE,
+                           RESTART_MESSAGE, WAITING_MESSAGE, ERROR)
 
 router = Router()
 
@@ -38,13 +37,13 @@ async def msg_display_letter(callback: CallbackQuery, state: FSMContext):
 @router.message(StateFilter(FSMFillForm.waiting_for_text_input))
 async def process_text_input(message: types.Message, state: FSMContext):
     await message.answer(WAITING_MESSAGE)
-    
+
     user_data = await state.get_data()
     chosen_letter = user_data['chosen_letter']
     await state.update_data(user_text=message.text)
-    
+
     evaluation_result = await send_to_api(message.text, letter=chosen_letter)
-    
+
     if evaluation_result == ERROR:
         await message.answer(ERROR)
         await state.set_state(state=None)
@@ -52,10 +51,11 @@ async def process_text_input(message: types.Message, state: FSMContext):
 
     await state.update_data(result=evaluation_result)
     results.append(evaluation_result)
-    
+
     keyboard = create_inline_kb(1, 'btn_6', 'btn_7', 'btn_8', 'btn_9')
-    
-    await message.answer(f"Ваш результат: {evaluation_result['total']} из 6 баллов", reply_markup=keyboard)
+
+    await message.answer(f"Ваш результат: {evaluation_result['total']} из 6 баллов",
+                         reply_markup=keyboard)
     await state.set_state(state=None)
 
 
@@ -64,7 +64,8 @@ async def get_comments(callback: CallbackQuery, state: FSMContext):
     user_data = await state.get_data()
     evaluation_result = user_data['result']
 
-    await callback.message.answer(text=f'Решение коммуникативной задачи: {evaluation_result["k1"]} из 2 баллов.\nОрганизация текста: {evaluation_result["k2"]} из 2 баллов.\nЯзыковое оформление текста: {evaluation_result["k3"]} из 2 баллов.\n{evaluation_result["comments"]}')
+    await callback.message.answer(
+        text=f'Решение коммуникативной задачи: {evaluation_result["k1"]} из 2 баллов.\nОрганизация текста: {evaluation_result["k2"]} из 2 баллов.\nЯзыковое оформление текста: {evaluation_result["k3"]} из 2 баллов.\n{evaluation_result["comments"]}')
 
 
 @router.callback_query(F.data == 'view_my_work')
@@ -73,10 +74,9 @@ async def view_my_work(callback: CallbackQuery, state: FSMContext):
     user_text = user_data['user_text']
 
     await callback.message.answer(text=f'Ваша работа: \n{user_text}')
-    
+
 
 async def start_over(event: Union[types.Message, CallbackQuery]):
-
     keyboard = create_inline_kb(3, 'btn_1', 'btn_2', 'btn_3')
     await event.bot.send_message(
         chat_id=event.from_user.id,
@@ -84,6 +84,6 @@ async def start_over(event: Union[types.Message, CallbackQuery]):
         reply_markup=keyboard
     )
 
+
 router.message(Command("evaluate"))(start_over)
 router.callback_query(F.data == 'restart')(start_over)
-

@@ -1,0 +1,8 @@
+[run]
+source =
+    fast_api/
+    handlers/
+    utils/
+
+omit =
+    tests/aiogram_tests/*

@@ -2,24 +2,26 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from config_reader import config
 from aiogram.client.session.aiohttp import AiohttpSession
 
-from handlers import start, evaluate, rate, get_stat, get_secret, help, other_handlers
+from config_reader import config
+from handlers import (start, evaluate, rate, get_stat, get_secret,
+                      help, other_handlers)
 from utils.menu import set_main_menu
 
 
 async def main():
-
     logging.basicConfig(
         level=logging.INFO,
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s')
 
     # в proxy указан прокси сервер pythonanywhere, он нужен для подключения
-    session = AiohttpSession(proxy='http://proxy.server:3128') 
-    bot = Bot(token=config.bot_token.get_secret_value(), parse_mode="HTML", session=session)
-    
+    session = AiohttpSession(proxy='http://proxy.server:3128')
+
+    bot = Bot(token=config.bot_token.get_secret_value(),
+              parse_mode="HTML",
+              session=session)
 
     dp = Dispatcher()
 

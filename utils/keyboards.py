@@ -1,7 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-
 BUTTONS_NAMES: dict[str, str] = {
     'btn_1': 'Письмо 1',
     'btn_2': 'Письмо 2',
@@ -29,7 +28,6 @@ BUTTONS: dict[str, str] = {
 
 def create_inline_kb(width: int,
                      *args: str) -> InlineKeyboardMarkup:
-
     kb_builder = InlineKeyboardBuilder()
 
     buttons: list[InlineKeyboardButton] = []

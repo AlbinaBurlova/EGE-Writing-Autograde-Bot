@@ -8,7 +8,6 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from config_reader import config
 from utils.strings import RATE_BOT, ASK_FOR_RECOMMENDATIONS, SKIP, THANKS
 
-
 router = Router()
 
 
@@ -58,6 +57,7 @@ async def skip_recommendations(message: types.Message, state: FSMContext, bot: B
     data = await state.get_data()
     await send_feedback_to_developer(bot, message.from_user.id, data['rating'])
     await state.set_state(state=None)
+
 
 # оценка и комментарии пользователя отправляются напрямую разработчикам для оперативной обратной связи
 async def send_feedback_to_developer(bot: Bot, user_id: int, rating: int, recommendations: str = None):

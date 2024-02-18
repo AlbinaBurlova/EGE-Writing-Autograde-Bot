@@ -1,8 +1,10 @@
-import matplotlib.pyplot as plt
+import os
+from typing import Union
 
+import matplotlib.pyplot as plt
 from aiogram import types, Router, F, Bot
-from aiogram.types import CallbackQuery, FSInputFile
 from aiogram.filters import Command
+from aiogram.types import CallbackQuery, FSInputFile
 
 # в будущем будет добавлена база данных
 results = []
@@ -10,24 +12,22 @@ results = []
 router = Router()
 
 
-@router.message(Command("get_stat"))
-async def show_stat(message: types.Message, bot: Bot):
-
+async def show_stat(event: Union[types.Message, CallbackQuery], bot: Bot):
     if not results:
-        await message.answer("Для статистики пока не хватает данных.")
+        await event.answer("Для статистики пока не хватает данных.")
         return
 
     averages = calculate_averages(results)
-    await message.answer(f"Средние результаты оценки: {averages}")
+    await event.answer(f"Средние результаты оценки: {averages}")
 
     plot_file = create_plot(averages)
-    await bot.send_photo(chat_id=message.chat.id, photo=FSInputFile(plot_file))
+    await bot.send_photo(chat_id=event.from_user.id, photo=FSInputFile(plot_file))
+
+    os.remove(plot_file)
 
 
-@router.callback_query(F.data == "get_stat")
-async def callback_show_stat(callback: CallbackQuery, bot: Bot):
-    await show_stat(callback.message, bot)
-    await callback.answer()
+router.message(Command("get_stat"))(show_stat)
+router.callback_query(F.data == "get_stat")(show_stat)
 
 
 def calculate_averages(result_list):
@@ -55,4 +55,3 @@ def create_plot(averages):
     plt.close()
 
     return plot_file
-

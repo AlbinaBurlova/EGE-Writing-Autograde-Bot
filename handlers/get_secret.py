@@ -4,7 +4,6 @@ from aiogram.types import Message
 
 from utils.strings import SECRET
 
-
 router = Router()
 
 
