@@ -19,7 +19,7 @@ async def run_test(handler, event):
             patch('handlers.get_stat.create_plot', return_value='plot.png'), \
             patch('os.remove') as mock_remove:
 
-        # Сначала проверьте сценарий, когда результатов нет
+        # Сначала проверяем сценарий, когда результатов нет
         get_stat.results.clear()
         requester = MockedBot(handler)
         calls = await requester.query(event)
@@ -32,7 +32,7 @@ async def run_test(handler, event):
             answer_message = calls.answer_callback_query.fetchone()
         assert answer_message.text == "Для статистики пока не хватает данных."
 
-        # Затем проверьте сценарий, когда результаты есть
+        # Затем проверяем сценарий, когда результаты есть
         get_stat.results.append({'score': 5, 'comments': 'Great!'})
         calls = await requester.query(event)
         request = requester.get_last_request()
