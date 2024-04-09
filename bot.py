@@ -16,12 +16,8 @@ async def main():
         format='%(filename)s:%(lineno)d #%(levelname)-8s '
                '[%(asctime)s] - %(name)s - %(message)s')
 
-    # в proxy указан прокси сервер pythonanywhere, он нужен для подключения
-    session = AiohttpSession(proxy='http://proxy.server:3128')
-
     bot = Bot(token=config.bot_token.get_secret_value(),
-              parse_mode="HTML",
-              session=session)
+              parse_mode="HTML")
 
     dp = Dispatcher()
 

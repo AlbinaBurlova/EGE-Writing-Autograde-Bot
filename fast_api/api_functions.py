@@ -2,11 +2,13 @@ import logging
 
 import httpx
 
+from config_reader import config
 from utils.strings import ERROR
 
 
 async def send_to_api(text, letter):
-    url = "https://stunning-star-octopus.ngrok-free.app/predict"
+
+    url = config.api_address
 
     data = {
         "data": {
