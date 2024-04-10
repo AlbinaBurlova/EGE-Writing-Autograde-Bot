@@ -2,7 +2,6 @@ import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
-from aiogram.client.session.aiohttp import AiohttpSession
 
 from config_reader import config
 from handlers import (start, evaluate, rate, get_stat, get_secret,
